@@ -39,6 +39,8 @@ Where:
 9.0 8.0
 ```
 
+**!! IMPORTANT !!** Sometimes example_data files are downloaded with extra space at the bottom of the file which will cause the program to throw `CLASS_ATRIBUTE_COUNT` error when trying to import data
+
 ## Output Format
 
 The exported file contains raw formatted data with minimal markup:
@@ -58,7 +60,7 @@ Centroid Cluster_id Point
 - `TOP_CLASS_COUNT_IS_NULL`: Number of classes is zero.
 - `TOP_CLASS_COUNT_TOO_BIG`: Number of classes exceeds number of points.
 - `CLASS_ATRIBUTE_VALUE`: Attribute could not be converted to a number.
-- `CLASS_ATRIBUTE_COUNT`: Attribute count mismatch across points.
+- `CLASS_ATRIBUTE_COUNT`: Attribute count mismatch across points. Comonly caused by a missplaced space in the data file
 
 ### Output Errors
 - `CAN_NOT_CREATE_FILE`: File cannot be created. Check path or disk health.
