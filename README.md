@@ -39,8 +39,6 @@ Where:
 9.0 8.0
 ```
 
-**!! IMPORTANT !!** Sometimes example_data files are downloaded with extra space at the bottom of the file which will cause the program to throw `CLASS_ATRIBUTE_COUNT` error when trying to import data
-
 ## Output Format
 
 The exported file contains raw formatted data with minimal markup:
