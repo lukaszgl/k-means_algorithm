@@ -16,7 +16,7 @@ m is number of points
 Data extractrion from file can return following errors:
 CAN_NOT_OPEN_FILE -> program is unable to open file, check file path and spelling
 HEAD_VARIABLE_VALUE -> unable to convert the top theree variables
-HEAD_CLASS_COUNT_TO_BIG -> number of classes is bigger than number of points
+HEAD_CLASS_COUNT_TOO_BIG -> number of classes is bigger than number of points
 CLASS_ATRIBUTE_VALUE -> unable to convert class atribute
 CLASS_ATRIBUTE_COUNT -> point may have a missing or extra atribute
 
