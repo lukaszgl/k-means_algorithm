@@ -56,7 +56,7 @@ Centroid Cluster_id Point
 - `CAN_NOT_OPEN_FILE`: Unable to open the file.
 - `TOP_VARIABLE_VALUE`: Invalid format for the first three variables.
 - `TOP_CLASS_COUNT_IS_NULL`: Number of classes is zero.
-- `TOP_CLASS_COUNT_TO_BIG`: Number of classes exceeds number of points.
+- `TOP_CLASS_COUNT_TOO_BIG`: Number of classes exceeds number of points.
 - `CLASS_ATRIBUTE_VALUE`: Attribute could not be converted to a number.
 - `CLASS_ATRIBUTE_COUNT`: Attribute count mismatch across points.
 
