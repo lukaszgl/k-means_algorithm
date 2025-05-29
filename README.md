@@ -74,6 +74,7 @@ Centroid Cluster_id Point
 ## Build Instructions
 
 Use a C++17-compatible compiler on Windows.
+Repository includes project files for simple execution via Visual Studio IDE 
 
 ## Notes
 
