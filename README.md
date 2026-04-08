@@ -1,8 +1,12 @@
 # K-Means Clustering Algorithm
+## Notice
+This repository is published for archival purposes as part of a completed university project. Please note that the codebase is no longer actively maintained, is provided as-is, and may require refactoring.
 
+Note: This project was developed entirely through manual programming, without the assistance of Large Language Models (LLMs) or AI code generation tools.
 ## Description
 
 This C++ program implements the **K-Means clustering algorithm** to classify data points into clusters based on their attributes. It reads data from a user-provided file, runs the clustering algorithm, displays results in the console with colored formatting, and optionally exports the raw results to a `.txt` file.
+
 
 ## Features
 
