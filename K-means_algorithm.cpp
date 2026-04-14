@@ -1,5 +1,5 @@
-﻿//This program is designed to assign datapoints to clases using K - means algorithm
-//Autor: Łukasz Gębka
+﻿//This program is designed to assign datapoints to classes using K - means algorithm
+//Author: Łukasz Gębka
 
 #include <iostream>
 #include <vector>
@@ -46,7 +46,7 @@ struct Point
 	{
 		if (!checkSize(a))
 		{
-			throw invalid_argument("Points have different atribute amounts");
+			throw invalid_argument("Points have different attribute amounts");
 		}
 		double distance_squared = 0;
 		for (int i = 0; i < a.attributes.size(); i++)
@@ -57,11 +57,7 @@ struct Point
 	}
 	Point operator=(const Point& other)
 	{
-		attributes.erase(attributes.begin(), attributes.end());
-		for (int i = 0; i < other.attributes.size(); i++)
-		{
-			attributes.push_back(other.attributes[i]);
-		}
+		attributes = other.attributes;
 		return *this;
 	}
 };
@@ -112,12 +108,7 @@ struct Centroid :public Point
 	}
 	Centroid operator=(const Point& other)
 	{
-		attributes.erase(attributes.begin(), attributes.end());
-
-		for (int i = 0; i < other.attributes.size(); i++)
-		{
-			attributes.push_back(other.attributes[i]);
-		}
+		attributes = other.attributes;
 		return *this;
 	}
 };
@@ -260,7 +251,7 @@ double EuclideanDistanceSquared(const Point& a, const Point& b)
 {
 	if (a.attributes.size() != b.attributes.size())
 	{
-		throw invalid_argument("POINT_ATRIBUTE_AMOUNT");
+		throw invalid_argument("POINT_attribute_AMOUNT");
 	}
 	double return_value = 0;
 	for (int i = 0; i < a.attributes.size(); i++)
@@ -361,51 +352,51 @@ public:
 	{
 		getline(stream, line);
 		Point data_point;
-		string atribute;
+		string attribute;
 		for (int i = 0; i < line.size(); i++)
 		{
 			if (line[i] != ' ' && i != line.size() - 1)
 			{
-				atribute += line[i];
+				attribute += line[i];
 			}
 			else if (i == line.size() - 1)
 			{
-				atribute += line[i];
+				attribute += line[i];
 				try
 				{
-					stod(atribute);
+					stod(attribute);
 				}
 				catch (exception& exc)
 				{
-					throw invalid_argument("CLASS_ATRIBUTE_VALUE");
+					throw invalid_argument("CLASS_attribute_VALUE");
 				}
-				data_point.attributes.push_back(stod(atribute));
+				data_point.attributes.push_back(stod(attribute));
 
 				//Get highest digit count before the point
 				if (highest_number_of_digits < NumberOfDigits(data_point.attributes.back()))
 				{
 					highest_number_of_digits = NumberOfDigits(data_point.attributes.back());
 				}
-				atribute = "";
+				attribute = "";
 			}
 			else
 			{
 				try
 				{
-					stod(atribute);
+					stod(attribute);
 				}
 				catch (exception& exc)
 				{
-					throw invalid_argument("CLASS_ATRIBUTE_VALUE");
+					throw invalid_argument("CLASS_attribute_VALUE");
 				}
-				data_point.attributes.push_back(stod(atribute));
+				data_point.attributes.push_back(stod(attribute));
 
 				//Get highest digit count before the point
 				if (highest_number_of_digits < NumberOfDigits(data_point.attributes.back()))
 				{
 					highest_number_of_digits = NumberOfDigits(data_point.attributes.back());
 				}
-				atribute = "";
+				attribute = "";
 			}
 		}
 		if(data_point.attributes.size()!=0){
@@ -418,7 +409,7 @@ public:
 	{
 		if (number_of_attributes != data[i].attributes.size())
 		{
-			throw invalid_argument("CLASS_ATRIBUTE_COUNT");
+			throw invalid_argument("CLASS_attribute_COUNT");
 		}
 	}
 
@@ -504,7 +495,7 @@ public:
 			{
 				stream << centroids[i].attributes[j] << " ";
 			}
-			//If atribute is non negative, add spaces to compensate for - sign and allign the table
+			//If attribute is non negative, add spaces to compensate for - sign and align the table
 			//Additionally add extra spaces if number of digits before point is lower than highest
 			for (int j = 0; j < number_of_attributes; j++)
 			{
@@ -520,7 +511,7 @@ public:
 			}
 			stream << "||";
 			stream << i;
-			//This loop adds spaces to allign the table
+			//This loop adds spaces to align the table
 			for (int j = 0; j < 11 - to_string(i).size(); j++)//j<(size of Centroid id) - (number of digits of i(centroid index))
 			{
 				stream << " ";
@@ -532,7 +523,7 @@ public:
 
 				stream << centroids[i].assigned_points[point_number]->attributes[j] << " ";
 			}
-			//If atribute is non negative, add spaces to compensate for - sign and allign the table
+			//If attribute is non negative, add spaces to compensate for - sign and align the table
 			//Additionally add extra spaces if number of digits before point is lower than highest
 			for (int j = 0; j < centroids[i].assigned_points[point_number]->attributes.size(); j++)
 			{
@@ -593,12 +584,12 @@ void displayManual()
 	Print("1.Input file format", cout, 0, COLOR_BLUE);
 	cout << "Variables stored in data file should be separated with spaces and put in following order:\n"
 	"algorithm_iteration_count max_error number_of_classes\n"
-	"point1_atribute_1 point1_atribute_2 ... point1_atribute_n\n"
-	"point2_atribute_1 point2_atribute_2 ... point2_atribute_n\n"
+	"point1_attribute_1 point1_attribute_2 ... point1_attribute_n\n"
+	"point2_attribute_1 point2_attribute_2 ... point2_attribute_n\n"
 	".\n"
 	".\n"
 	".\n"
-	"pointm_atribute_1 pointm_atribute_2 ... pointm_atribute_n\n"
+	"pointm_attribute_1 pointm_attribute_2 ... pointm_attribute_n\n"
 	"\n"
 	"where:\n"
 	"n is number of attributes(it has to be the same in every point)\n"
@@ -610,8 +601,8 @@ void displayManual()
 	COLOR_RED "TOP_VARIABLE_VALUE"<< COLOR_RESET << "-> unable to convert the top theree variables\n"
 	COLOR_RED "TOP_CLASS_COUNT_IS_NULL"<< COLOR_RESET << "-> number of classes is zero\n"
 	COLOR_RED "TOP_CLASS_COUNT_TO_BIG"<< COLOR_RESET << "-> number of classes is bigger than number of points\n"
-	COLOR_RED "CLASS_ATRIBUTE_VALUE"<< COLOR_RESET << "-> unable to convert class atribute\n"
-	COLOR_RED "CLASS_ATRIBUTE_COUNT"<< COLOR_RESET << "-> point may have a missing or extra atribute\n"
+	COLOR_RED "CLASS_attribute_VALUE"<< COLOR_RESET << "-> unable to convert class attribute\n"
+	COLOR_RED "CLASS_attribute_COUNT"<< COLOR_RESET << "-> point may have a missing or extra attribute\n"
 	"\n";
 	Print("3.Output file format", cout, 0, COLOR_BLUE);
 	cout<<"Output file is written with minimal formating for easier exporting and is formated the following way:\n"
@@ -634,7 +625,7 @@ void displayManual()
 }
 void displayMenu(bool bad_data)
 {
-	Print("This program is designed to assign datapoints to clases using K-means algorithm");
+	Print("This program is designed to assign datapoints to classes using K-means algorithm");
 	Print("It is required to open this program in a separate terminal window");
 	Print("To avoid unexpected behaviour do not change window size when not in menu");
 	Print(bad_data ? COLOR_RED"Data is not valid, you need to extract it first" : COLOR_GREEN"Data is valid, algorithm is ready");
@@ -685,7 +676,7 @@ int main()
 					}
 				}
 
-				Print("Enter file path, remember to add the file extension to the name (egz .txt)", cout, 1);
+				Print("Enter file path, remember to add the file extension to the name (e.g. .txt)", cout, 1);
 				ifstream data_file;
 				data_file = getValidInputFile();
 
@@ -725,7 +716,7 @@ int main()
 				{
 				case true:
 				{
-					Print("Enter file path, remember to add the file extension to the name (egz .txt)", cout, 1);
+					Print("Enter file path, remember to add the file extension to the name (e.g. .txt)", cout, 1);
 					ofstream output_file;
 					output_file = getValidOutputFile();
 					clusterModel.displayResultsRaw(output_file, precision);
