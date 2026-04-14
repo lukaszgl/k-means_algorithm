@@ -333,11 +333,9 @@ public:
         centroids.clear();
     }
 	void readInputFile(istream& stream){
-	//Get variables on top of the file
 	if (!(stream >> algorithm_iteration_count >> max_error >> number_of_classes)) {
 		throw invalid_argument("TOP_VARIABLE_VALUE");
 	}
-	//Number of classes can not equal 0
 	if (number_of_classes == 0)
 	{
 		throw invalid_argument("TOP_CLASS_COUNT_IS_NULL");
@@ -368,7 +366,7 @@ public:
 				}
 				catch (exception& exc)
 				{
-					throw invalid_argument("CLASS_attribute_VALUE");
+					throw invalid_argument("CLASS_ATTRIBUTE_VALUE");
 				}
 				data_point.attributes.push_back(stod(attribute));
 
@@ -387,7 +385,7 @@ public:
 				}
 				catch (exception& exc)
 				{
-					throw invalid_argument("CLASS_attribute_VALUE");
+					throw invalid_argument("CLASS_ATTRIBUTE_VALUE");
 				}
 				data_point.attributes.push_back(stod(attribute));
 
@@ -409,7 +407,7 @@ public:
 	{
 		if (number_of_attributes != data[i].attributes.size())
 		{
-			throw invalid_argument("CLASS_attribute_COUNT");
+			throw invalid_argument("CLASS_ATTRIBUTE_COUNT");
 		}
 	}
 
@@ -600,9 +598,9 @@ void displayManual()
 	COLOR_RED "CAN_NOT_OPEN_FILE"<< COLOR_RESET << "-> program is unable to open file, check file path and spelling\n"
 	COLOR_RED "TOP_VARIABLE_VALUE"<< COLOR_RESET << "-> unable to convert the top theree variables\n"
 	COLOR_RED "TOP_CLASS_COUNT_IS_NULL"<< COLOR_RESET << "-> number of classes is zero\n"
-	COLOR_RED "TOP_CLASS_COUNT_TO_BIG"<< COLOR_RESET << "-> number of classes is bigger than number of points\n"
-	COLOR_RED "CLASS_attribute_VALUE"<< COLOR_RESET << "-> unable to convert class attribute\n"
-	COLOR_RED "CLASS_attribute_COUNT"<< COLOR_RESET << "-> point may have a missing or extra attribute\n"
+	COLOR_RED "TOP_CLASS_COUNT_TOO_BIG"<< COLOR_RESET << "-> number of classes is bigger than number of points\n"
+	COLOR_RED "CLASS_ATTRIBUTE_VALUE"<< COLOR_RESET << "-> unable to convert class attribute\n"
+	COLOR_RED "CLASS_ATTRIBUTE_COUNT"<< COLOR_RESET << "-> point may have a missing or extra attribute\n"
 	"\n";
 	Print("3.Output file format", cout, 0, COLOR_BLUE);
 	cout<<"Output file is written with minimal formating for easier exporting and is formated the following way:\n"
