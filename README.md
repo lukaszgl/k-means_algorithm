@@ -1,8 +1,5 @@
 # K-Means Clustering Algorithm
-## Notice
-This repository is published for archival purposes as part of a completed university project. Please note that the codebase is no longer actively maintained, is provided as-is, and may require refactoring.
-
-Note: This project was developed entirely through manual programming, without the assistance of Large Language Models (LLMs) or AI code generation tools.
+> **Note:** This repository is published as a completed university project, demonstrating core software engineering and algorithm design principles. It was developed entirely through manual programming, without the assistance of LLMs or AI code generation tools.
 ## Description
 
 This C++ program implements the **K-Means clustering algorithm** to classify data points into clusters based on their attributes. It reads data from a user-provided file, runs the clustering algorithm, displays results in the console with colored formatting, and optionally exports the raw results to a `.txt` file.
@@ -10,12 +7,22 @@ This C++ program implements the **K-Means clustering algorithm** to classify dat
 
 ## Features
 
-- Customizable iteration count and error threshold.
-- File parsing with detailed error feedback.
-- Color-coded terminal output for better readability.
-- Option to export raw clustering results to a file.
-- Built-in manual for data formatting and error explanations.
+- **Object-Oriented Design:** Encapsulated clustering engine ensuring memory safety and clean state management.
+- **Robust Exception Handling:** Graceful recovery from file I/O errors, invalid data formatting, and divide-by-zero edge cases.
+- **Dynamic Terminal UI:** Color-coded console output with auto-scaling table columns based on data precision.
+- **Customizable Parameters:** User-defined iteration limits and maximum error thresholds.
+- **Data Export:** Option to export raw, minimally formatted clustering results to a `.txt` file for downstream analysis.
+  
+## Usage
+### Prerequisites
+- A C++17 compatible compiler.
+- **Windows OS:** This application utilizes `<Windows.h>` for terminal ANSI escape codes and virtual terminal processing.
 
+### Build & Run
+1. Clone the repository and open the project files in Visual Studio (or your preferred Windows C++ IDE).
+2. Compile the executable.
+3. Run the application in a standalone terminal window (avoid resizing the window during execution to maintain UI table formatting).
+4. Follow the on-screen menu to extract data, set precision, and run the algorithm.
 ## Input File Format
 
 The input file must be a text file with space-separated values in the following format:
@@ -57,34 +64,15 @@ Centroid Cluster_id Point
 ## Error Messages
 
 ### Input Errors
-- `CAN_NOT_OPEN_FILE`: Unable to open the file.
-- `TOP_VARIABLE_VALUE`: Invalid format for the first three variables.
-- `TOP_CLASS_COUNT_IS_NULL`: Number of classes is zero.
-- `TOP_CLASS_COUNT_TOO_BIG`: Number of classes exceeds number of points.
-- `CLASS_ATRIBUTE_VALUE`: Attribute could not be converted to a number.
-- `CLASS_ATRIBUTE_COUNT`: Attribute count mismatch across points. Comonly caused by a missplaced space in the data file
+- `CAN_NOT_OPEN_FILE`: Unable to locate/open the file. Verify the path and extension.
+- `TOP_VARIABLE_VALUE`: Invalid data types found in the configuration header (first three variables).
+- `TOP_CLASS_COUNT_IS_NULL`: Target number of classes cannot be zero.
+- `TOP_CLASS_COUNT_TOO_BIG`: The requested number of classes exceeds the total number of provided data points.
+- `CLASS_ATRIBUTE_VALUE`: An attribute could not be parsed as a numerical value.
+- `CLASS_ATRIBUTE_COUNT`: Inconsistent number of attributes detected across points.
 
 ### Output Errors
-- `CAN_NOT_CREATE_FILE`: File cannot be created. Check path or disk health.
-
-## Usage
-
-1. Compile the program using a C++ compiler (Windows only, due to use of `Windows.h` and console commands).
-2. Run the executable. You will be presented with a menu.
-3. Select the option to load data from file.
-4. Run the algorithm.
-5. View results or export them.
-
-## Build Instructions
-
-Use a C++17-compatible compiler on Windows.
-Repository includes project files for simple execution via Visual Studio IDE 
-
-## Notes
-
-- This program uses ANSI escape codes for colored console output.
-- Do not resize the console during clustering execution to avoid formatting issues.
-- Works best in Windows terminal or compatible consoles with virtual terminal processing enabled.
+- `CAN_NOT_CREATE_FILE`: Unable to write the output file. Verify directory write permissions or disk health.
 
 ## Author
 
