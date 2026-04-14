@@ -270,14 +270,78 @@ double EuclideanDistanceSquared(const Point& a, const Point& b)
 	return return_value;
 }
 class KMeans{
-	int algorithm_iteration_count;
-	double max_error;
-	int number_of_classes;
-	int number_of_attributes;
-	double error;
-	int highest_number_of_digits;// Before the point
+	int algorithm_iteration_count = 0;
+	double max_error = 0.0;
+	int number_of_classes = 0;
+	int number_of_attributes = 0;
+	int highest_number_of_digits = 0;
+	double error = 0.0;
+
+	vector<Point> data;
+	vector<Centroid> centroids;
+
+	void initializeRandomly(){
+	//Assign centroids to random points, points don't repeat
+	srand(time(NULL));
+	vector<int> previous_numbers;
+	bool repeated_number;
+	int random_index;
+	centroids.erase(centroids.begin(), centroids.end());
+	for (int i = 0; i < number_of_classes; i++)
+	{
+		centroids.push_back(Centroid());
+		do
+		{
+			repeated_number = false;
+			random_index = rand() % data.size();
+			for (int j = 0; j < previous_numbers.size(); j++)
+			{
+				if (previous_numbers[j] == random_index)
+				{
+					previous_numbers.erase(previous_numbers.begin() + j);
+					repeated_number = true;
+					break;
+				}
+			}
+			previous_numbers.push_back(random_index);
+		} while (repeated_number);
+		centroids[i] = data[random_index];
+	}
+}
+	void iterateAlgorithm(){
+	//Clear assigned points if there are any
+	for (int i = 0; i < number_of_classes; i++)
+	{
+		centroids[i].eraseAssignedPoints();
+	}
+	//Assign points to the closest centroid
+	for (int i = 0; i < data.size(); i++)
+	{
+		double min_distance = EuclideanDistanceSquared(data[i], centroids[0]);
+		int closest_centroid_index = 0;
+		for (int j = 1; j < number_of_classes; j++)
+		{
+			if (EuclideanDistanceSquared(data[i], centroids[j]) < min_distance)
+			{
+				min_distance = EuclideanDistanceSquared(data[i], centroids[j]);
+				closest_centroid_index = j;
+			}
+		}
+		centroids[closest_centroid_index].assignPoint(&data[i]);
+	}
+	//Relocate centroids to their respective mean values
+	for (int i = 0; i < number_of_classes; i++)
+	{
+		centroids[i].relocateToMeanValues();
+	}
+}
 public:
-	void readInputFile(istream& stream, vector<Point>& data){
+	void clearData() 
+    {
+        data.clear();
+        centroids.clear();
+    }
+	void readInputFile(istream& stream){
 	//Get variables on top of the file
 	if (!(stream >> algorithm_iteration_count >> max_error >> number_of_classes)) {
 		throw invalid_argument("TOP_VARIABLE_VALUE");
@@ -365,69 +429,12 @@ public:
 	}
 	return;
 }
-	void initializeRandomly(const vector<Point>& data, vector<Centroid>& centroids){
-	//Assign centroids to random points, points don't repeat
-	srand(time(NULL));
-	vector<int> previous_numbers;
-	bool repeated_number;
-	int random_index;
-	centroids.erase(centroids.begin(), centroids.end());
-	for (int i = 0; i < number_of_classes; i++)
-	{
-		centroids.push_back(Centroid());
-		do
-		{
-			repeated_number = false;
-			random_index = rand() % data.size();
-			for (int j = 0; j < previous_numbers.size(); j++)
-			{
-				if (previous_numbers[j] == random_index)
-				{
-					previous_numbers.erase(previous_numbers.begin() + j);
-					repeated_number = true;
-					break;
-				}
-			}
-			previous_numbers.push_back(random_index);
-		} while (repeated_number);
-		centroids[i] = data[random_index];
-	}
-}
-	void iterateAlgorithm(vector<Point>& data, vector<Centroid>& centroids){
-	//Clear assigned points if there are any
-	for (int i = 0; i < number_of_classes; i++)
-	{
-		centroids[i].eraseAssignedPoints();
-	}
-	//Assign points to the closest centroid
-	for (int i = 0; i < data.size(); i++)
-	{
-		double min_distance = EuclideanDistanceSquared(data[i], centroids[0]);
-		int closest_centroid_index = 0;
-		for (int j = 1; j < number_of_classes; j++)
-		{
-			if (EuclideanDistanceSquared(data[i], centroids[j]) < min_distance)
-			{
-				min_distance = EuclideanDistanceSquared(data[i], centroids[j]);
-				closest_centroid_index = j;
-			}
-		}
-		centroids[closest_centroid_index].assignPoint(&data[i]);
-	}
-	//Relocate centroids to their respective mean values
-	for (int i = 0; i < number_of_classes; i++)
-	{
-		centroids[i].relocateToMeanValues();
-	}
-}
-	void runAlgorithm(vector<Point>& data, vector<Centroid>& centroids){
-	//Initialize centroids
-	initializeRandomly(data, centroids);
-	//Perform iterations
+	void runAlgorithm(){
+	initializeRandomly();
 	for (int i = 0; i < algorithm_iteration_count; i++)
 	{
 		try {
-		iterateAlgorithm(data, centroids);
+		iterateAlgorithm();
 		}
 		catch(exception exc){
 			ExcPrint(exc);
@@ -435,7 +442,6 @@ public:
 		}
 	}
 
-	//Calculate error
 	double inertia = 0;
 	for (int i = 0; i < centroids.size(); i++)
 	{
@@ -443,10 +449,9 @@ public:
 	}
 	error = inertia;
 }
-	void displayResults(ostream& stream, int precision, const vector<Point>& data, const vector<Centroid>& centroids){
+	void displayResults(ostream& stream, int precision){
 	system("cls");
 	streamsize default_precision = stream.precision();
-	//Set precision of data
 	stream << setprecision(precision) << fixed;
 
 	if (error > max_error)
@@ -459,9 +464,7 @@ public:
 
 	//Set color (black font with green background)
 	stream << COLOR_TABLE_TOP;
-	//Start printing top of the table
 	stream << "||Centroid";
-	//Compute number of characters in column
 	int number_of_characters_in_column;
 	if (precision == 0)
 	{
@@ -493,7 +496,7 @@ public:
 	{
 		for (int point_number = 0; point_number < centroids[i].assigned_points.size(); point_number++)
 		{
-			//Switch background color to bright green (it is in the loop to fix a bug)
+			//Switch background color to bright green
 			stream << COLOR_TABLE_MAIN;
 			//Print centroid attributes
 			stream << "||";
@@ -543,7 +546,6 @@ public:
 					}
 				}
 			}
-			//Reset color(bug fix)
 			stream << COLOR_RESET;
 
 			stream << endl;
@@ -553,7 +555,7 @@ public:
 	stream << setprecision(default_precision);
 	stream << COLOR_RESET;
 }
-	void displayResultsRaw(ostream& stream, int precision,const vector<Point>& data,const vector<Centroid>& centroids){
+	void displayResultsRaw(ostream& stream, int precision){
 	//Save default precision
 	streamsize default_precision = stream.precision();
 
@@ -654,24 +656,20 @@ void setupTerminal()
 }
 int main()
 {
-	vector<Point> data;
-	vector<Centroid> centroids;
 	KMeans clusterModel;
 	bool bad_data = true;
-	//Enable ANSI sequences in terminal, required for colors
+	//Enable ANSI sequences in terminal
 	setupTerminal();
 
 	while (true)
 	{	
 		try {
 			displayMenu(bad_data);
-			int choice = 0;
-			choice = getInt();
+			int choice = getInt();
 			switch (choice)
 			{
 			case 1:
 			{
-				//Check if variables have already been initialized
 				if (!bad_data)
 				{
 					bool overwrite;
@@ -679,8 +677,7 @@ int main()
 					overwrite = getBool();
 					if (overwrite)
 					{
-						data.erase(data.begin(), data.end());
-						centroids.erase(centroids.begin(), centroids.end());
+						clusterModel.clearData();
 					}
 					else {
 						system("cls");
@@ -688,14 +685,13 @@ int main()
 					}
 				}
 
-				//Get valid file, handle exceptions
 				Print("Enter file path, remember to add the file extension to the name (egz .txt)", cout, 1);
 				ifstream data_file;
 				data_file = getValidInputFile();
 
 				try
 				{
-					clusterModel.readInputFile(data_file, data);
+					clusterModel.readInputFile(data_file);
 					bad_data = false;
 				}
 				catch (invalid_argument& err)
@@ -715,15 +711,13 @@ int main()
 					break;
 				}
 
-				clusterModel.runAlgorithm(data, centroids);
+				clusterModel.runAlgorithm();
 
-				//Display data
 				Print("Set decimal precision of data to be displayed");
 				Print("Low precision can cause table to be unaligned in specific cases", cout, 1);
 				int precision = getInt();
-				clusterModel.displayResults(cout, precision, data, centroids);
+				clusterModel.displayResults(cout, precision);
 
-				//Save file if needed
 				Print("Do you wish to save raw data to file? (Y/N)");
 				bool save;
 				save = getBool();
@@ -734,7 +728,7 @@ int main()
 					Print("Enter file path, remember to add the file extension to the name (egz .txt)", cout, 1);
 					ofstream output_file;
 					output_file = getValidOutputFile();
-					clusterModel.displayResultsRaw(output_file, precision, data, centroids);
+					clusterModel.displayResultsRaw(output_file, precision);
 					output_file.close();
 					break;
 				}
