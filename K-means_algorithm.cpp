@@ -448,13 +448,11 @@ void runAlgorithm(vector<Point>& data, vector<Centroid>& centroids)
 }
 void displayResults(ostream& stream, int precision, const vector<Point>& data, const vector<Centroid>& centroids)
 {
-	//Clear screen
 	system("cls");
-	//Save default precision
 	streamsize default_precision = stream.precision();
 	//Set precision of data
 	stream << setprecision(precision) << fixed;
-	//Print error
+
 	if (error > max_error)
 	{
 		Print("Max error exceeded with error = ", stream, 0, COLOR_YELLOW);
@@ -564,10 +562,7 @@ void displayResultsRaw(ostream& stream, int precision,const vector<Point>& data,
 	//Save default precision
 	streamsize default_precision = stream.precision();
 
-	//Set precision of data
 	stream << setprecision(precision) << fixed;
-
-	//Print error and current precision
 	stream << "Precision = " << precision << " " << "Error = " << error << endl;
 
 	//Print table
@@ -637,11 +632,12 @@ void displayManual()
 	Print("4.Output file errors", cout, 0, COLOR_BLUE);
 	cout<< COLOR_RED "CAN_NOT_CREATE_FILE"<< COLOR_RESET "-> can not create file, try changing path or check disk health"<<endl;
 }
-void displayMenu(bool bad_variables)
+void displayMenu(bool bad_data)
 {
 	Print("This program is designed to assign datapoints to clases using K-means algorithm");
+	Print("It is required to open this program in a separate terminal window");
 	Print("To avoid unexpected behaviour do not change window size when not in menu");
-	Print(bad_variables ? COLOR_RED"Data is not valid, you need to extract it first" : COLOR_GREEN"Data is valid, algorithm is ready");
+	Print(bad_data ? COLOR_RED"Data is not valid, you need to extract it first" : COLOR_GREEN"Data is valid, algorithm is ready");
 	Print("1. Extract data from file");
 	Print("2. Run algorithm");
 	Print("3. Help");
@@ -655,22 +651,22 @@ void setupTerminal()
 	GetConsoleMode(hOut, &dwMode);
 	dwMode |= ENABLE_VIRTUAL_TERMINAL_PROCESSING;
 	SetConsoleMode(hOut, dwMode);
-	//Set color to default (bug fix)
+	//Set color to default
 	cout << COLOR_RESET;
 }
 int main()
 {
-	vector<Point>* data = new vector<Point>;
-	vector<Centroid>* centroids = new vector<Centroid>;
+	vector<Point> data;
+	vector<Centroid> centroids;
 
-	bool bad_variables = true;
+	bool bad_data = true;
 	//Enable ANSI sequences in terminal, required for colors
 	setupTerminal();
 
 	while (true)
-	{	//Catch any unhandled exceptions and safely exit program
+	{	
 		try {
-			displayMenu(bad_variables);
+			displayMenu(bad_data);
 			int choice = 0;
 			choice = getInt();
 			switch (choice)
@@ -678,15 +674,15 @@ int main()
 			case 1:
 			{
 				//Check if variables have already been initialized
-				if (!bad_variables)
+				if (!bad_data)
 				{
 					bool overwrite;
 					Print("Variables have already been initialized, do you wish to overwrite the data? (Y/N)", cout, 1);
 					overwrite = getBool();
 					if (overwrite)
 					{
-						data->erase(data->begin(), data->end());
-						centroids->erase(centroids->begin(), centroids->end());
+						data.erase(data.begin(), data.end());
+						centroids.erase(centroids.begin(), centroids.end());
 					}
 					else {
 						system("cls");
@@ -699,11 +695,10 @@ int main()
 				ifstream data_file;
 				data_file = getValidInputFile();
 
-				//Read from file, handle exceprions
 				try
 				{
-					readInputFile(data_file, *data);
-					bad_variables = false;
+					readInputFile(data_file, data);
+					bad_data = false;
 				}
 				catch (invalid_argument& err)
 				{
@@ -715,22 +710,20 @@ int main()
 			}
 			case 2:
 			{
-				//Check variables
-				if (bad_variables)
+				if (bad_data)
 				{
 					Print(COLOR_RED"No data, you have to extract it first");
 					PAUSE
 					break;
 				}
 
-				//Run algorithm
-				runAlgorithm(*data, *centroids);
+				runAlgorithm(data, centroids);
 
 				//Display data
 				Print("Set decimal precision of data to be displayed");
 				Print("Low precision can cause table to be unaligned in specific cases", cout, 1);
 				int precision = getInt();
-				displayResults(cout, precision, *data, *centroids);
+				displayResults(cout, precision, data, centroids);
 
 				//Save file if needed
 				Print("Do you wish to save raw data to file? (Y/N)");
@@ -743,7 +736,7 @@ int main()
 					Print("Enter file path, remember to add the file extension to the name (egz .txt)", cout, 1);
 					ofstream output_file;
 					output_file = getValidOutputFile();
-					displayResultsRaw(output_file, precision, *data, *centroids);
+					displayResultsRaw(output_file, precision, data, centroids);
 					output_file.close();
 					break;
 				}
@@ -763,8 +756,6 @@ int main()
 			}
 			case 0:
 			{
-				delete data;
-				delete centroids;
 				return 0;
 			}
 			default:
@@ -778,12 +769,9 @@ int main()
 		{
 			ExcPrint(err);
 			Print("Irrecoverable error occured, closing the program", cout, false, COLOR_RED);
-			delete data;
-			delete centroids;
+
 			return -1;
 		}
 	}
-	delete data;
-	delete centroids;
 	return 0;
 }
