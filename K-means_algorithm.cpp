@@ -28,14 +28,6 @@
 
 using namespace std;
 
-//Declare global variables
-int algorithm_iteration_count;
-double max_error;
-int number_of_classes;
-int number_of_attributes;
-double error;
-int highest_number_of_digits;// Before the point
-
 struct Point
 {
 	vector<double> attributes;
@@ -129,6 +121,7 @@ struct Centroid :public Point
 		return *this;
 	}
 };
+
 int NumberOfDigits(double var)
 {
 	return to_string((int)var).size();
@@ -263,8 +256,28 @@ ofstream getValidOutputFile()
 	} while (retry);
 	return output_file;
 }
-void readInputFile(istream& stream, vector<Point>& data)
+double EuclideanDistanceSquared(const Point& a, const Point& b)
 {
+	if (a.attributes.size() != b.attributes.size())
+	{
+		throw invalid_argument("POINT_ATRIBUTE_AMOUNT");
+	}
+	double return_value = 0;
+	for (int i = 0; i < a.attributes.size(); i++)
+	{
+		return_value += pow((a.attributes[i] - b.attributes[i]), 2);
+	}
+	return return_value;
+}
+class KMeans{
+	int algorithm_iteration_count;
+	double max_error;
+	int number_of_classes;
+	int number_of_attributes;
+	double error;
+	int highest_number_of_digits;// Before the point
+public:
+	void readInputFile(istream& stream, vector<Point>& data){
 	//Get variables on top of the file
 	if (!(stream >> algorithm_iteration_count >> max_error >> number_of_classes)) {
 		throw invalid_argument("TOP_VARIABLE_VALUE");
@@ -352,21 +365,7 @@ void readInputFile(istream& stream, vector<Point>& data)
 	}
 	return;
 }
-double EuclideanDistanceSquared(const Point& a, const Point& b)
-{
-	if (a.attributes.size() != b.attributes.size())
-	{
-		throw invalid_argument("POINT_ATRIBUTE_AMOUNT");
-	}
-	double return_value = 0;
-	for (int i = 0; i < a.attributes.size(); i++)
-	{
-		return_value += pow((a.attributes[i] - b.attributes[i]), 2);
-	}
-	return return_value;
-}
-void initializeRandomly(const vector<Point>& data, vector<Centroid>& centroids)
-{
+	void initializeRandomly(const vector<Point>& data, vector<Centroid>& centroids){
 	//Assign centroids to random points, points don't repeat
 	srand(time(NULL));
 	vector<int> previous_numbers;
@@ -394,8 +393,7 @@ void initializeRandomly(const vector<Point>& data, vector<Centroid>& centroids)
 		centroids[i] = data[random_index];
 	}
 }
-void iterateAlgorithm(vector<Point>& data, vector<Centroid>& centroids)
-{
+	void iterateAlgorithm(vector<Point>& data, vector<Centroid>& centroids){
 	//Clear assigned points if there are any
 	for (int i = 0; i < number_of_classes; i++)
 	{
@@ -422,8 +420,7 @@ void iterateAlgorithm(vector<Point>& data, vector<Centroid>& centroids)
 		centroids[i].relocateToMeanValues();
 	}
 }
-void runAlgorithm(vector<Point>& data, vector<Centroid>& centroids)
-{
+	void runAlgorithm(vector<Point>& data, vector<Centroid>& centroids){
 	//Initialize centroids
 	initializeRandomly(data, centroids);
 	//Perform iterations
@@ -446,8 +443,7 @@ void runAlgorithm(vector<Point>& data, vector<Centroid>& centroids)
 	}
 	error = inertia;
 }
-void displayResults(ostream& stream, int precision, const vector<Point>& data, const vector<Centroid>& centroids)
-{
+	void displayResults(ostream& stream, int precision, const vector<Point>& data, const vector<Centroid>& centroids){
 	system("cls");
 	streamsize default_precision = stream.precision();
 	//Set precision of data
@@ -557,8 +553,7 @@ void displayResults(ostream& stream, int precision, const vector<Point>& data, c
 	stream << setprecision(default_precision);
 	stream << COLOR_RESET;
 }
-void displayResultsRaw(ostream& stream, int precision,const vector<Point>& data,const vector<Centroid>& centroids)
-{
+	void displayResultsRaw(ostream& stream, int precision,const vector<Point>& data,const vector<Centroid>& centroids){
 	//Save default precision
 	streamsize default_precision = stream.precision();
 
@@ -587,6 +582,9 @@ void displayResultsRaw(ostream& stream, int precision,const vector<Point>& data,
 	}
 	stream << setprecision(default_precision);
 }
+};
+
+
 void displayManual()
 {
 	system("cls");
@@ -658,7 +656,7 @@ int main()
 {
 	vector<Point> data;
 	vector<Centroid> centroids;
-
+	KMeans clusterModel;
 	bool bad_data = true;
 	//Enable ANSI sequences in terminal, required for colors
 	setupTerminal();
@@ -697,7 +695,7 @@ int main()
 
 				try
 				{
-					readInputFile(data_file, data);
+					clusterModel.readInputFile(data_file, data);
 					bad_data = false;
 				}
 				catch (invalid_argument& err)
@@ -717,13 +715,13 @@ int main()
 					break;
 				}
 
-				runAlgorithm(data, centroids);
+				clusterModel.runAlgorithm(data, centroids);
 
 				//Display data
 				Print("Set decimal precision of data to be displayed");
 				Print("Low precision can cause table to be unaligned in specific cases", cout, 1);
 				int precision = getInt();
-				displayResults(cout, precision, data, centroids);
+				clusterModel.displayResults(cout, precision, data, centroids);
 
 				//Save file if needed
 				Print("Do you wish to save raw data to file? (Y/N)");
@@ -736,7 +734,7 @@ int main()
 					Print("Enter file path, remember to add the file extension to the name (egz .txt)", cout, 1);
 					ofstream output_file;
 					output_file = getValidOutputFile();
-					displayResultsRaw(output_file, precision, data, centroids);
+					clusterModel.displayResultsRaw(output_file, precision, data, centroids);
 					output_file.close();
 					break;
 				}
