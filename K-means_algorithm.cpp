@@ -3,7 +3,6 @@
 
 #include <iostream>
 #include <vector>
-#include <deque>
 #include <stdexcept>
 #include <cmath>
 #include <string>
@@ -33,17 +32,17 @@ using namespace std;
 int algorithm_iteration_count;
 double max_error;
 int number_of_classes;
-int number_of_atributes;
+int number_of_attributes;
 double error;
 int highest_number_of_digits;// Before the point
 
 struct Point
 {
-	vector<double> atributes;
-	//Returns false if size of atributes is different between two points
+	vector<double> attributes;
+	//Returns false if size of attributes is different between two points
 	bool checkSize(const Point& other)
 	{
-		if (this->atributes.size() != other.atributes.size())
+		if (this->attributes.size() != other.attributes.size())
 		{
 			return false;
 		}
@@ -51,25 +50,25 @@ struct Point
 			return true;
 		}
 	}
-	double EucllideanDistanceSquared(const Point& a)
+	double EuclideanDistanceSquared(const Point& a)
 	{
 		if (!checkSize(a))
 		{
 			throw invalid_argument("Points have different atribute amounts");
 		}
 		double distance_squared = 0;
-		for (int i = 0; i < a.atributes.size(); i++)
+		for (int i = 0; i < a.attributes.size(); i++)
 		{
-			distance_squared += pow((atributes[i] - a.atributes[i]), 2);
+			distance_squared += pow((attributes[i] - a.attributes[i]), 2);
 		}
 		return distance_squared;
 	}
 	Point operator=(const Point& other)
 	{
-		atributes.erase(atributes.begin(), atributes.end());
-		for (int i = 0; i < other.atributes.size(); i++)
+		attributes.erase(attributes.begin(), attributes.end());
+		for (int i = 0; i < other.attributes.size(); i++)
 		{
-			atributes.push_back(other.atributes[i]);
+			attributes.push_back(other.attributes[i]);
 		}
 		return *this;
 	}
@@ -91,7 +90,7 @@ struct Centroid :public Point
 		double sum = 0;
 		for (int i = 0; i < assigned_points.size(); i++)
 		{
-			sum += sqrt(EucllideanDistanceSquared(*assigned_points[i]));
+			sum += sqrt(EuclideanDistanceSquared(*assigned_points[i]));
 		}
 		return sum / assigned_points.size();
 	}
@@ -100,29 +99,32 @@ struct Centroid :public Point
 		double inertia = 0;
 		for (int i = 0; i < assigned_points.size(); i++)
 		{
-			inertia += sqrt(EucllideanDistanceSquared(*assigned_points[i]));
+			inertia += EuclideanDistanceSquared(*assigned_points[i]);
 		}
 		return inertia;
 	}
 	void relocateToMeanValues()
 	{
-		for (int i = 0; i < atributes.size(); i++)
+		if (assigned_points.empty()) {
+        return; 
+    	}
+		for (int i = 0; i < attributes.size(); i++)
 		{
 			double sum = 0;
 			for (int j = 0; j < assigned_points.size(); j++)
 			{
-				sum += assigned_points[j]->atributes[i];
+				sum += assigned_points[j]->attributes[i];
 			}
-			this->atributes[i] = sum / assigned_points.size();
+			this->attributes[i] = sum / assigned_points.size();
 		}
 	}
 	Centroid operator=(const Point& other)
 	{
-		atributes.erase(atributes.begin(), atributes.end());
+		attributes.erase(attributes.begin(), attributes.end());
 
-		for (int i = 0; i < other.atributes.size(); i++)
+		for (int i = 0; i < other.attributes.size(); i++)
 		{
-			atributes.push_back(other.atributes[i]);
+			attributes.push_back(other.attributes[i]);
 		}
 		return *this;
 	}
@@ -174,7 +176,7 @@ int getInt()
 			}
 			cin.clear();
 			cin.ignore(numeric_limits<streamsize>::max(), '\n');
-			Print("Enter an intiger");
+			Print("Enter an integer");
 		}
 		else
 		{
@@ -261,7 +263,7 @@ ofstream getValidOutputFile()
 	} while (retry);
 	return output_file;
 }
-void readInputFile(istream& stream, deque<Point>& data)
+void readInputFile(istream& stream, vector<Point>& data)
 {
 	//Get variables on top of the file
 	if (!(stream >> algorithm_iteration_count >> max_error >> number_of_classes)) {
@@ -276,7 +278,7 @@ void readInputFile(istream& stream, deque<Point>& data)
 	string ignore_line;
 	getline(stream, ignore_line);
 
-	//Get atributes
+	//Get attributes
 	string line;
 	while (!stream.eof())
 	{
@@ -300,12 +302,12 @@ void readInputFile(istream& stream, deque<Point>& data)
 				{
 					throw invalid_argument("CLASS_ATRIBUTE_VALUE");
 				}
-				data_point.atributes.push_back(stod(atribute));
+				data_point.attributes.push_back(stod(atribute));
 
 				//Get highest digit count before the point
-				if (highest_number_of_digits < NumberOfDigits(data_point.atributes.back()))
+				if (highest_number_of_digits < NumberOfDigits(data_point.attributes.back()))
 				{
-					highest_number_of_digits = NumberOfDigits(data_point.atributes.back());
+					highest_number_of_digits = NumberOfDigits(data_point.attributes.back());
 				}
 				atribute = "";
 			}
@@ -319,24 +321,25 @@ void readInputFile(istream& stream, deque<Point>& data)
 				{
 					throw invalid_argument("CLASS_ATRIBUTE_VALUE");
 				}
-				data_point.atributes.push_back(stod(atribute));
+				data_point.attributes.push_back(stod(atribute));
 
 				//Get highest digit count before the point
-				if (highest_number_of_digits < NumberOfDigits(data_point.atributes.back()))
+				if (highest_number_of_digits < NumberOfDigits(data_point.attributes.back()))
 				{
-					highest_number_of_digits = NumberOfDigits(data_point.atributes.back());
+					highest_number_of_digits = NumberOfDigits(data_point.attributes.back());
 				}
 				atribute = "";
 			}
 		}
-		data.push_back(data_point);
+		if(data_point.attributes.size()!=0){
+			data.push_back(data_point);		
+		}
 	}
-
-	//Check for any missing or extra point atributes
-	number_of_atributes = data[0].atributes.size();
+	//Check for any missing or extra point attributes
+	number_of_attributes = data[0].attributes.size();
 	for (int i = 1; i < data.size(); i++)
 	{
-		if (number_of_atributes != data[i].atributes.size())
+		if (number_of_attributes != data[i].attributes.size())
 		{
 			throw invalid_argument("CLASS_ATRIBUTE_COUNT");
 		}
@@ -349,20 +352,20 @@ void readInputFile(istream& stream, deque<Point>& data)
 	}
 	return;
 }
-double EucllideanDistanceSquared(const Point& a, const Point& b)
+double EuclideanDistanceSquared(const Point& a, const Point& b)
 {
-	if (a.atributes.size() != b.atributes.size())
+	if (a.attributes.size() != b.attributes.size())
 	{
 		throw invalid_argument("POINT_ATRIBUTE_AMOUNT");
 	}
 	double return_value = 0;
-	for (int i = 0; i < a.atributes.size(); i++)
+	for (int i = 0; i < a.attributes.size(); i++)
 	{
-		return_value += pow((a.atributes[i] - b.atributes[i]), 2);
+		return_value += pow((a.attributes[i] - b.attributes[i]), 2);
 	}
 	return return_value;
 }
-void initializeRandomly(const deque<Point>& data, deque<Centroid>& centroids)
+void initializeRandomly(const vector<Point>& data, vector<Centroid>& centroids)
 {
 	//Assign centroids to random points, points don't repeat
 	srand(time(NULL));
@@ -391,7 +394,7 @@ void initializeRandomly(const deque<Point>& data, deque<Centroid>& centroids)
 		centroids[i] = data[random_index];
 	}
 }
-void iterateAlgorithm(deque<Point>& data, deque<Centroid>& centroids)
+void iterateAlgorithm(vector<Point>& data, vector<Centroid>& centroids)
 {
 	//Clear assigned points if there are any
 	for (int i = 0; i < number_of_classes; i++)
@@ -401,13 +404,13 @@ void iterateAlgorithm(deque<Point>& data, deque<Centroid>& centroids)
 	//Assign points to the closest centroid
 	for (int i = 0; i < data.size(); i++)
 	{
-		double min_distance = EucllideanDistanceSquared(data[i], centroids[0]);
+		double min_distance = EuclideanDistanceSquared(data[i], centroids[0]);
 		int closest_centroid_index = 0;
 		for (int j = 1; j < number_of_classes; j++)
 		{
-			if (EucllideanDistanceSquared(data[i], centroids[j]) < min_distance)
+			if (EuclideanDistanceSquared(data[i], centroids[j]) < min_distance)
 			{
-				min_distance = EucllideanDistanceSquared(data[i], centroids[j]);
+				min_distance = EuclideanDistanceSquared(data[i], centroids[j]);
 				closest_centroid_index = j;
 			}
 		}
@@ -419,7 +422,7 @@ void iterateAlgorithm(deque<Point>& data, deque<Centroid>& centroids)
 		centroids[i].relocateToMeanValues();
 	}
 }
-void runAlgorithm(deque<Point>& data, deque<Centroid>& centroids)
+void runAlgorithm(vector<Point>& data, vector<Centroid>& centroids)
 {
 	//Initialize centroids
 	initializeRandomly(data, centroids);
@@ -443,7 +446,7 @@ void runAlgorithm(deque<Point>& data, deque<Centroid>& centroids)
 	}
 	error = inertia;
 }
-void displayResults(ostream& stream, int precision, const deque<Point>& data, const deque<Centroid>& centroids)
+void displayResults(ostream& stream, int precision, const vector<Point>& data, const vector<Centroid>& centroids)
 {
 	//Clear screen
 	system("cls");
@@ -469,12 +472,12 @@ void displayResults(ostream& stream, int precision, const deque<Point>& data, co
 	if (precision == 0)
 	{
 		//2 is representing "-" " "
-		number_of_characters_in_column = 2 * number_of_atributes + (highest_number_of_digits * number_of_atributes);
+		number_of_characters_in_column = 2 * number_of_attributes + (highest_number_of_digits * number_of_attributes);
 	}
 	else
 	{
 		//precision+3 is representing "-" "." " " and the digits after point
-		number_of_characters_in_column = (precision + 3) * number_of_atributes + (highest_number_of_digits * number_of_atributes);
+		number_of_characters_in_column = (precision + 3) * number_of_attributes + (highest_number_of_digits * number_of_attributes);
 	}
 
 
@@ -498,21 +501,21 @@ void displayResults(ostream& stream, int precision, const deque<Point>& data, co
 		{
 			//Switch background color to bright green (it is in the loop to fix a bug)
 			stream << COLOR_TABLE_MAIN;
-			//Print centroid atributes
+			//Print centroid attributes
 			stream << "||";
-			for (int j = 0; j < number_of_atributes; j++)
+			for (int j = 0; j < number_of_attributes; j++)
 			{
-				stream << centroids[i].atributes[j] << " ";
+				stream << centroids[i].attributes[j] << " ";
 			}
 			//If atribute is non negative, add spaces to compensate for - sign and allign the table
 			//Additionally add extra spaces if number of digits before point is lower than highest
-			for (int j = 0; j < number_of_atributes; j++)
+			for (int j = 0; j < number_of_attributes; j++)
 			{
-				if (centroids[i].atributes[j] >= 0)
+				if (centroids[i].attributes[j] >= 0)
 					stream << " ";
-				if (NumberOfDigits(centroids[i].atributes[j]) < highest_number_of_digits)
+				if (NumberOfDigits(centroids[i].attributes[j]) < highest_number_of_digits)
 				{
-					for (int ind = 0; ind < (highest_number_of_digits - NumberOfDigits(centroids[i].atributes[j])); ind++)
+					for (int ind = 0; ind < (highest_number_of_digits - NumberOfDigits(centroids[i].attributes[j])); ind++)
 					{
 						stream << " ";
 					}
@@ -526,21 +529,21 @@ void displayResults(ostream& stream, int precision, const deque<Point>& data, co
 				stream << " ";
 			}
 			stream << "||";
-			//Print point atributes
-			for (int j = 0; j < centroids[i].assigned_points[point_number]->atributes.size(); j++)
+			//Print point attributes
+			for (int j = 0; j < centroids[i].assigned_points[point_number]->attributes.size(); j++)
 			{
 
-				stream << centroids[i].assigned_points[point_number]->atributes[j] << " ";
+				stream << centroids[i].assigned_points[point_number]->attributes[j] << " ";
 			}
 			//If atribute is non negative, add spaces to compensate for - sign and allign the table
 			//Additionally add extra spaces if number of digits before point is lower than highest
-			for (int j = 0; j < centroids[i].assigned_points[point_number]->atributes.size(); j++)
+			for (int j = 0; j < centroids[i].assigned_points[point_number]->attributes.size(); j++)
 			{
-				if (centroids[i].assigned_points[point_number]->atributes[j] >= 0)
+				if (centroids[i].assigned_points[point_number]->attributes[j] >= 0)
 					stream << " ";
-				if (NumberOfDigits(centroids[i].assigned_points[point_number]->atributes[j]) < highest_number_of_digits)
+				if (NumberOfDigits(centroids[i].assigned_points[point_number]->attributes[j]) < highest_number_of_digits)
 				{
-					for (int ind = 0; ind < (highest_number_of_digits - NumberOfDigits(centroids[i].assigned_points[point_number]->atributes[j])); ind++)
+					for (int ind = 0; ind < (highest_number_of_digits - NumberOfDigits(centroids[i].assigned_points[point_number]->attributes[j])); ind++)
 					{
 						stream << " ";
 					}
@@ -556,7 +559,7 @@ void displayResults(ostream& stream, int precision, const deque<Point>& data, co
 	stream << setprecision(default_precision);
 	stream << COLOR_RESET;
 }
-void displayResultsRaw(ostream& stream, int precision,const deque<Point>& data,const deque<Centroid>& centroids)
+void displayResultsRaw(ostream& stream, int precision,const vector<Point>& data,const vector<Centroid>& centroids)
 {
 	//Save default precision
 	streamsize default_precision = stream.precision();
@@ -573,16 +576,16 @@ void displayResultsRaw(ostream& stream, int precision,const deque<Point>& data,c
 	{
 		for (int point_number = 0; point_number < centroids[i].assigned_points.size(); point_number++)
 		{
-			for (int j = 0; j < number_of_atributes; j++)
+			for (int j = 0; j < number_of_attributes; j++)
 			{
-				stream << centroids[i].atributes[j] << " ";
+				stream << centroids[i].attributes[j] << " ";
 			}
 
 			stream << i << " ";
 
-			for (int j = 0; j < centroids[i].assigned_points[point_number]->atributes.size(); j++)
+			for (int j = 0; j < centroids[i].assigned_points[point_number]->attributes.size(); j++)
 			{
-				stream << centroids[i].assigned_points[point_number]->atributes[j] << " ";
+				stream << centroids[i].assigned_points[point_number]->attributes[j] << " ";
 			}
 			stream << endl;
 		}
@@ -603,7 +606,7 @@ void displayManual()
 	"pointm_atribute_1 pointm_atribute_2 ... pointm_atribute_n\n"
 	"\n"
 	"where:\n"
-	"n is number of atributes(it has to be the same in every point)\n"
+	"n is number of attributes(it has to be the same in every point)\n"
 	"m is number of points\n"
 	"\n";
 	Print("2.Input file errors", cout, 0, COLOR_BLUE);
@@ -620,16 +623,16 @@ void displayManual()
 	"\n"
 	"\"Precision =\" decimal_precision \"Error =\" error\n"
 	"\"Centroid Cluster_id Point\"\n"
-	"centroid1_atributes cluster1_id first_assigned_point_atributes\n"
+	"centroid1_attributes cluster1_id first_assigned_point_attributes\n"
 	".\n"
 	".\n"
 	".\n"
-	"centroid1_atributes cluster1_id last_assigned_point_atributes\n"
-	"centroid2_atributes cluster2_id first_assigned_point_atributes\n"
+	"centroid1_attributes cluster1_id last_assigned_point_attributes\n"
+	"centroid2_attributes cluster2_id first_assigned_point_attributes\n"
 	".\n"
 	".\n"
 	".\n"
-	"centroid(number_of_classes)_atributes cluster(number_of_classes)_id last_assigned_point_atributes\n"
+	"centroid(number_of_classes)_attributes cluster(number_of_classes)_id last_assigned_point_attributes\n"
 	"\n";
 	Print("4.Output file errors", cout, 0, COLOR_BLUE);
 	cout<< COLOR_RED "CAN_NOT_CREATE_FILE"<< COLOR_RESET "-> can not create file, try changing path or check disk health"<<endl;
@@ -657,8 +660,8 @@ void setupTerminal()
 }
 int main()
 {
-	deque<Point>* data = new deque<Point>;
-	deque<Centroid>* centroids = new deque<Centroid>;
+	vector<Point>* data = new vector<Point>;
+	vector<Centroid>* centroids = new vector<Centroid>;
 
 	bool bad_variables = true;
 	//Enable ANSI sequences in terminal, required for colors
