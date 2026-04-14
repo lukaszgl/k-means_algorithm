@@ -579,47 +579,51 @@ public:
 void displayManual()
 {
 	system("cls");
-	Print("1.Input file format", cout, 0, COLOR_BLUE);
-	cout << "Variables stored in data file should be separated with spaces and put in following order:\n"
-	"algorithm_iteration_count max_error number_of_classes\n"
-	"point1_attribute_1 point1_attribute_2 ... point1_attribute_n\n"
-	"point2_attribute_1 point2_attribute_2 ... point2_attribute_n\n"
-	".\n"
-	".\n"
-	".\n"
-	"pointm_attribute_1 pointm_attribute_2 ... pointm_attribute_n\n"
-	"\n"
-	"where:\n"
-	"n is number of attributes(it has to be the same in every point)\n"
-	"m is number of points\n"
-	"\n";
-	Print("2.Input file errors", cout, 0, COLOR_BLUE);
-	cout<<"Data extractrion from file can return following errors:\n"
-	COLOR_RED "CAN_NOT_OPEN_FILE"<< COLOR_RESET << "-> program is unable to open file, check file path and spelling\n"
-	COLOR_RED "TOP_VARIABLE_VALUE"<< COLOR_RESET << "-> unable to convert the top theree variables\n"
-	COLOR_RED "TOP_CLASS_COUNT_IS_NULL"<< COLOR_RESET << "-> number of classes is zero\n"
-	COLOR_RED "TOP_CLASS_COUNT_TOO_BIG"<< COLOR_RESET << "-> number of classes is bigger than number of points\n"
-	COLOR_RED "CLASS_ATTRIBUTE_VALUE"<< COLOR_RESET << "-> unable to convert class attribute\n"
-	COLOR_RED "CLASS_ATTRIBUTE_COUNT"<< COLOR_RESET << "-> point may have a missing or extra attribute\n"
-	"\n";
-	Print("3.Output file format", cout, 0, COLOR_BLUE);
-	cout<<"Output file is written with minimal formating for easier exporting and is formated the following way:\n"
-	"\n"
-	"\"Precision =\" decimal_precision \"Error =\" error\n"
-	"\"Centroid Cluster_id Point\"\n"
-	"centroid1_attributes cluster1_id first_assigned_point_attributes\n"
-	".\n"
-	".\n"
-	".\n"
-	"centroid1_attributes cluster1_id last_assigned_point_attributes\n"
-	"centroid2_attributes cluster2_id first_assigned_point_attributes\n"
-	".\n"
-	".\n"
-	".\n"
-	"centroid(number_of_classes)_attributes cluster(number_of_classes)_id last_assigned_point_attributes\n"
-	"\n";
-	Print("4.Output file errors", cout, 0, COLOR_BLUE);
-	cout<< COLOR_RED "CAN_NOT_CREATE_FILE"<< COLOR_RESET "-> can not create file, try changing path or check disk health"<<endl;
+	
+	Print("1. Input file format", cout, 0, COLOR_BLUE);
+	cout << "Variables stored in the data file should be separated by spaces and ordered as follows:\n"
+		"algorithm_iteration_count max_error number_of_classes\n"
+		"point1_attribute_1 point1_attribute_2 ... point1_attribute_n\n"
+		"point2_attribute_1 point2_attribute_2 ... point2_attribute_n\n"
+		".\n"
+		".\n"
+		".\n"
+		"pointm_attribute_1 pointm_attribute_2 ... pointm_attribute_n\n"
+		"\n"
+		"where:\n"
+		"n is the number of attributes (must be consistent across all points)\n"
+		"m is the total number of data points\n"
+		"\n";
+		
+	Print("2. Input file errors", cout, 0, COLOR_BLUE);
+	cout << "Data extraction from the file can return the following diagnostics:\n"
+		<< COLOR_RED << "CAN_NOT_OPEN_FILE" << COLOR_RESET << "       -> Unable to locate or open the file. Check the path and extension.\n"
+		<< COLOR_RED << "TOP_VARIABLE_VALUE" << COLOR_RESET << "      -> Invalid data types found in the configuration header (first 3 variables).\n"
+		<< COLOR_RED << "TOP_CLASS_COUNT_IS_NULL" << COLOR_RESET << " -> Target number of classes cannot be zero.\n"
+		<< COLOR_RED << "TOP_CLASS_COUNT_TOO_BIG" << COLOR_RESET << " -> Requested number of classes exceeds the total number of data points.\n"
+		<< COLOR_RED << "CLASS_ATTRIBUTE_VALUE" << COLOR_RESET << "   -> An attribute could not be parsed as a numerical value.\n"
+		<< COLOR_RED << "CLASS_ATTRIBUTE_COUNT" << COLOR_RESET << "   -> Inconsistent number of attributes detected (often caused by an extra space).\n"
+		"\n";
+		
+	Print("3. Output file format", cout, 0, COLOR_BLUE);
+	cout << "The output file is written with minimal formatting for easier downstream parsing:\n"
+		"\n"
+		"\"Precision =\" decimal_precision \"Error =\" error\n"
+		"\"Centroid Cluster_id Point\"\n"
+		"centroid1_attributes cluster1_id first_assigned_point_attributes\n"
+		".\n"
+		".\n"
+		".\n"
+		"centroid1_attributes cluster1_id last_assigned_point_attributes\n"
+		"centroid2_attributes cluster2_id first_assigned_point_attributes\n"
+		".\n"
+		".\n"
+		".\n"
+		"centroid(number_of_classes)_attributes cluster(number_of_classes)_id last_assigned_point_attributes\n"
+		"\n";
+		
+	Print("4. Output file errors", cout, 0, COLOR_BLUE);
+	cout << COLOR_RED << "CAN_NOT_CREATE_FILE" << COLOR_RESET << " -> Cannot create the file. Verify directory write permissions or disk health.\n" << endl;
 }
 void displayMenu(bool bad_data)
 {
