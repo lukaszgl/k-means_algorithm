@@ -251,7 +251,7 @@ double EuclideanDistanceSquared(const Point& a, const Point& b)
 {
 	if (a.attributes.size() != b.attributes.size())
 	{
-		throw invalid_argument("POINT_attribute_AMOUNT");
+		throw invalid_argument("POINT_ATTRIBUTE_AMOUNT");
 	}
 	double return_value = 0;
 	for (int i = 0; i < a.attributes.size(); i++)
