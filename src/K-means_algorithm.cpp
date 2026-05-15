@@ -214,8 +214,9 @@ ifstream getValidInputFile()
 	{
 		try
 		{
+			cout<<"../data/";
 			getline(cin, file_name);
-			data_file = openInputFile(file_name);
+			data_file = openInputFile("../data/" + file_name);
 			retry = false;
 		}
 		catch (invalid_argument& err)
